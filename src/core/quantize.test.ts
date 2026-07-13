@@ -29,6 +29,13 @@ test('alpha below threshold yields EMPTY', () => {
   expect(out[1]).toBe(1)
 })
 
+test('fully transparent cells are empty even with threshold 0', () => {
+  const s = samplesOf([[0, 0, 0, 0], [1, 0, 0, 1]])
+  const out = quantize(s, { cols: 2, rows: 1 }, rbw, { dither: true, alphaThreshold: 0 })
+  expect(out[0]).toBe(EMPTY)
+  expect(out[1]).toBe(1)
+})
+
 test('empty palette yields all EMPTY', () => {
   const s = samplesOf([[1, 0, 0, 1]])
   const out = quantize(s, { cols: 1, rows: 1 }, createPalette([]), { dither: false, alphaThreshold: 0.5 })

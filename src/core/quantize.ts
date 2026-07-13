@@ -26,7 +26,7 @@ export function quantize(
       const col = ltr ? k : d.cols - 1 - k
       const i = row * d.cols + col
       const a = samples[i * 4 + 3]
-      if (a < opts.alphaThreshold) { out[i] = EMPTY; continue }
+      if (a < opts.alphaThreshold || a === 0) { out[i] = EMPTY; continue }
 
       const r = clamp01(samples[i * 4] / a + err[i * 3])
       const g = clamp01(samples[i * 4 + 1] / a + err[i * 3 + 1])
@@ -50,7 +50,8 @@ export function quantize(
       for (const t of targets) {
         if (t.row < 0 || t.row >= d.rows || t.col < 0 || t.col >= d.cols) continue
         const j = t.row * d.cols + t.col
-        if (samples[j * 4 + 3] < opts.alphaThreshold) continue // empty cells get no error
+        const ta = samples[j * 4 + 3]
+        if (ta < opts.alphaThreshold || ta === 0) continue // empty cells get no error
         err[j * 3] += er * t.w
         err[j * 3 + 1] += eg * t.w
         err[j * 3 + 2] += eb * t.w
