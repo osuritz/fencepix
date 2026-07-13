@@ -36,4 +36,4 @@ body { font-family: system-ui, sans-serif; font-size: 14px; color: #1a1a1a; }
 .error { color: #b00020; }
 .image-controls { display: flex; flex-wrap: wrap; gap: 4px; }
 .remap-dialog { border: 1px solid #b00020; border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
-.autosave-banner { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); background: #b00020; color: #fff; padding: 8px 16px; border-radius: 6px; }
+.autosave-banner { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); background: #b00020; color: #fff; padding: 8px 16px; border-radius: 6px; z-index: 20; }
