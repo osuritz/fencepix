@@ -1,5 +1,5 @@
 import { beforeEach, expect, test, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { FenceSetupPanel } from './FenceSetupPanel'
 import { useStore } from '../store'
@@ -58,4 +58,18 @@ test('resizing over manual edits asks for confirmation', async () => {
   expect(confirmSpy).toHaveBeenCalled()
   expect(useStore.getState().project.dims.cols).toBe(41) // declined → unchanged
   confirmSpy.mockRestore()
+})
+
+test('resyncs fields when the store project changes externally', () => {
+  render(<FenceSetupPanel />)
+  const p = defaultProject()
+  const dims = { cols: 20, rows: 10 }
+  act(() => {
+    useStore.getState().loadProject(
+      { ...p, dims, base: new Uint16Array(200), overlay: new Uint16Array(200) },
+      null,
+    )
+  })
+  expect(screen.getByLabelText(/columns/i)).toHaveValue(20)
+  expect(screen.getByLabelText(/rows/i)).toHaveValue(10)
 })

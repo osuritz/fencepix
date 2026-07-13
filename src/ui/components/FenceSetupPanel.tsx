@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { MAX_CELLS, gridFromPhysical, physicalFromGrid } from '../../core/lattice'
 import { useStore } from '../store'
 
@@ -16,6 +16,18 @@ export function FenceSetupPanel() {
   const initial = physicalFromGrid(dims, meshInches)
   const [width, setWidth] = useState(+(initial.width / UNIT_INCHES.ft).toFixed(2))
   const [height, setHeight] = useState(+(initial.height / UNIT_INCHES.ft).toFixed(2))
+
+  // Resync the local mirrors when the project grid changes externally
+  // (autosave restore, project import, or our own Apply).
+  useEffect(() => {
+    setCols(dims.cols)
+    setRows(dims.rows)
+    setMesh(meshInches)
+    const p = physicalFromGrid(dims, meshInches)
+    setWidth(+(p.width / UNIT_INCHES[unit]).toFixed(2))
+    setHeight(+(p.height / UNIT_INCHES[unit]).toFixed(2))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dims, meshInches])
 
   function fromPhysical(w: number, h: number, m: number, u: Unit) {
     const d = gridFromPhysical(w * UNIT_INCHES[u], h * UNIT_INCHES[u], m)
