@@ -36,10 +36,9 @@ export function FenceCanvas() {
     draw()
     const unsub = useStore.subscribe(draw)
     const onKey = (e: KeyboardEvent) => {
-      if (e.code === 'Space' && e.target === document.body) {
-        spaceRef.current = e.type === 'keydown'
-        e.preventDefault()
-      }
+      if (e.code !== 'Space') return
+      if (e.type === 'keyup') { spaceRef.current = false; return }
+      if (e.target === document.body) { spaceRef.current = true; e.preventDefault() }
     }
     window.addEventListener('resize', draw)
     window.addEventListener('keydown', onKey)
@@ -50,6 +49,26 @@ export function FenceCanvas() {
       window.removeEventListener('keydown', onKey)
       window.removeEventListener('keyup', onKey)
     }
+  }, [draw])
+
+  // Native non-passive listener: React registers root wheel listeners as
+  // passive, so preventDefault() in an onWheel prop is ignored and the page
+  // would scroll while zooming.
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault()
+      const rect = canvas.getBoundingClientRect()
+      const mx = e.clientX - rect.left, my = e.clientY - rect.top
+      const v = viewRef.current
+      const before = screenToDesign(v, mx, my)
+      const pxPerUnit = Math.min(100, Math.max(2, v.pxPerUnit * Math.exp(-e.deltaY * 0.0015)))
+      viewRef.current = { pxPerUnit, offsetX: mx - before.x * pxPerUnit, offsetY: my - before.y * pxPerUnit }
+      draw()
+    }
+    canvas.addEventListener('wheel', onWheel, { passive: false })
+    return () => canvas.removeEventListener('wheel', onWheel)
   }, [draw])
 
   function eventCell(e: React.PointerEvent) {
@@ -105,19 +124,6 @@ export function FenceCanvas() {
         panRef.current = null
         strokingRef.current = false
         lastCellRef.current = ''
-      }}
-      onWheel={e => {
-        const rect = e.currentTarget.getBoundingClientRect()
-        const mx = e.clientX - rect.left, my = e.clientY - rect.top
-        const v = viewRef.current
-        const before = screenToDesign(v, mx, my)
-        const pxPerUnit = Math.min(100, Math.max(2, v.pxPerUnit * Math.exp(-e.deltaY * 0.0015)))
-        viewRef.current = {
-          pxPerUnit,
-          offsetX: mx - before.x * pxPerUnit,
-          offsetY: my - before.y * pxPerUnit,
-        }
-        draw()
       }}
     />
   )
