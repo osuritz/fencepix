@@ -46,4 +46,9 @@ describe('deserialize rejects invalid input', () => {
     delete bad.palette
     expect(() => deserializeProject(JSON.stringify(bad))).toThrow('invalid project file')
   })
+  test('malformed palette entries', () => {
+    const bad = JSON.parse(serializeProject(defaultProject()))
+    bad.palette.colors[0] = {}
+    expect(() => deserializeProject(JSON.stringify(bad))).toThrow('invalid project file')
+  })
 })

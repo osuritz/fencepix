@@ -75,7 +75,9 @@ export function deserializeProject(json: string): Project {
   if (!dims || !Number.isInteger(dims.cols) || !Number.isInteger(dims.rows)) invalid()
   if (typeof raw.base !== 'string' || typeof raw.overlay !== 'string') invalid()
   const palette = raw.palette as Palette
-  if (!palette || !Array.isArray(palette.colors) || !Number.isInteger(palette.nextId)) invalid()
+  if (!palette || !Array.isArray(palette.colors) || !Number.isInteger(palette.nextId)
+    || palette.colors.some(c => !c || !Number.isInteger(c.id)
+      || typeof c.name !== 'string' || typeof c.hex !== 'string')) invalid()
   const settings = raw.settings as ProjectSettings
   if (!settings || typeof settings.dither !== 'boolean'
     || typeof settings.alphaThreshold !== 'number' || typeof settings.overagePct !== 'number') invalid()
