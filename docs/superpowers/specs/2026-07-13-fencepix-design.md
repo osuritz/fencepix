@@ -69,11 +69,11 @@ Users size the design either way, with two-way sync:
   2⅜", or custom) → app computes columns × rows.
 - **Direct:** enter columns × rows of diamonds.
 
-Physical → counts rounds **down** to whole diamonds: `cols = floor(width / W)`
-(using the base row; the half-diamond stagger of odd rows stays inside the
-same bounding width because all rows get the same column count),
-`rows = floor((height − H/2) / (H/2)) + 1`, i.e. the first row needs a full
-`H` and each additional row adds `H/2`.
+Physical → counts rounds **down** to whole diamonds. All rows get the same
+column count, and the half-diamond stagger of odd rows must still fit inside
+the fence width, so `cols = floor((width − W/2) / W)` and
+`rows = floor((height − H/2) / (H/2))` — n rows occupy `(n + 1) · H/2` of
+height: the first row needs a full `H` and each additional row adds `H/2`.
 
 Hard cap: 50,000 diamonds (≈ a 170ft × 8ft fence at 2" mesh), with a clear
 error message.
