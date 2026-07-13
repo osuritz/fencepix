@@ -19,3 +19,8 @@ test('overage rounds up per color', () => {
 test('all-empty grid yields empty list', () => {
   expect(shoppingList(new Uint16Array(10), 5)).toEqual([])
 })
+
+test('equal counts tie-break by colorId ascending', () => {
+  const cells = Uint16Array.from([5, 3, 5, 3])
+  expect(shoppingList(cells, 0).map(l => l.colorId)).toEqual([3, 5])
+})
