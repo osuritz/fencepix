@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { expect, test } from 'vitest'
 import { sampleImage, type SourceImage } from './sample'
 
 function solidImage(w: number, h: number, rgba: [number, number, number, number]): SourceImage {
