@@ -1,10 +1,19 @@
 # fencepix
 
-Chain-link fence pixel art planner. Vite + React + TypeScript, tested with Vitest.
+Plan chain-link fence pixel art: upload a photo, quantize it onto the fence's
+diamond lattice using purchasable insert colors (e.g. Put-in-Cups), touch it
+up by hand, then export a shopping list, a printable installation chart, and
+a PNG preview. Everything runs in the browser — no backend, images never
+leave your machine.
 
-## Scripts
+## Develop
 
-- `npm run dev` — start the dev server
-- `npm run build` — type-check and build for production
-- `npm test` — run the test suite
-- `npm run test:watch` — run tests in watch mode
+    npm install
+    npm run dev     # local dev server
+    npm test        # vitest suite
+    npm run build   # production build (static, deploy anywhere)
+
+## Docs
+
+- Design spec: `docs/superpowers/specs/2026-07-13-fencepix-design.md`
+- Implementation plan: `docs/superpowers/plans/2026-07-13-fencepix.md`

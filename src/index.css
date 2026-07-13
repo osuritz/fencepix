@@ -11,3 +11,29 @@ body { font-family: system-ui, sans-serif; font-size: 14px; color: #1a1a1a; }
   .print-chart { position: static; overflow: visible; }
   .chart-page { page-break-after: always; }
 }
+
+.app-shell { display: grid; grid-template-columns: 280px 1fr 300px; height: 100%; }
+.sidebar { overflow-y: auto; border-right: 1px solid #ddd; }
+.output-panel { overflow-y: auto; border-left: 1px solid #ddd; }
+.output-panel nav { display: flex; gap: 4px; padding: 8px; border-bottom: 1px solid #ddd; }
+.canvas-area { display: flex; flex-direction: column; min-width: 0; }
+.fence-canvas { flex: 1; width: 100%; touch-action: none; cursor: crosshair; }
+.toolbar { display: flex; gap: 4px; align-items: center; padding: 8px; border-bottom: 1px solid #ddd; }
+.toolbar .hint { margin-left: auto; color: #777; font-size: 12px; }
+.panel { padding: 12px; border-bottom: 1px solid #eee; display: flex; flex-direction: column; gap: 8px; }
+.panel h3 { font-size: 13px; text-transform: uppercase; color: #555; }
+.panel label { display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
+.panel table { border-collapse: collapse; }
+.panel td, .panel th { padding: 2px 8px; text-align: left; }
+.swatch { display: inline-block; width: 18px; height: 18px; border: 1px solid #0002; border-radius: 3px; }
+.palette-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.palette-chip { display: flex; gap: 4px; align-items: center; }
+.palette-chip .swatch { width: 22px; height: 22px; cursor: pointer; }
+.palette-chip [aria-pressed='true'] { outline: 2px solid #1d4f91; }
+.palette-chip input[type='text'], .palette-chip input:not([type]) { width: 90px; }
+.current-color { width: 22px; height: 22px; border: 1px solid #0004; border-radius: 3px; }
+.dropzone { border: 2px dashed #bbb; border-radius: 6px; padding: 12px; text-align: center; }
+.error { color: #b00020; }
+.image-controls { display: flex; flex-wrap: wrap; gap: 4px; }
+.remap-dialog { border: 1px solid #b00020; border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+.autosave-banner { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); background: #b00020; color: #fff; padding: 8px 16px; border-radius: 6px; }
