@@ -1,3 +1,13 @@
 * { box-sizing: border-box; margin: 0; }
 html, body, #root { height: 100%; }
 body { font-family: system-ui, sans-serif; font-size: 14px; color: #1a1a1a; }
+
+.print-chart { position: fixed; inset: 0; background: #fff; overflow: auto; z-index: 10; padding: 16px; }
+.print-chart svg { width: 100%; height: auto; }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; list-style-position: inside; }
+.chart-page { break-inside: avoid; }
+@media print {
+  .no-print, .app-shell { display: none !important; }
+  .print-chart { position: static; overflow: visible; }
+  .chart-page { page-break-after: always; }
+}
