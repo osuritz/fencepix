@@ -3,6 +3,7 @@ import { paginate } from '../../core/chart'
 import { cellCenter } from '../../core/lattice'
 import { EMPTY, composite } from '../../core/grid'
 import { luminance } from '../../core/color'
+import { Button } from '@/components/ui/button'
 
 export function PrintChart({ onClose }: { onClose: () => void }) {
   const project = useStore(s => s.project)
@@ -13,16 +14,16 @@ export function PrintChart({ onClose }: { onClose: () => void }) {
   const colorById = new Map(project.palette.colors.map(c => [c.id, c]))
 
   return (
-    <div className="print-chart">
-      <div className="chart-actions no-print">
-        <button onClick={() => window.print()}>Print</button>
-        <button onClick={onClose}>Close</button>
+    <div className="print-chart fixed inset-0 z-10 overflow-auto bg-white p-4 text-neutral-900">
+      <div className="chart-actions no-print mb-3 flex gap-2">
+        <Button variant="outline" size="sm" onClick={() => window.print()}>Print</Button>
+        <Button variant="outline" size="sm" onClick={onClose}>Close</Button>
       </div>
       <h2>Installation chart — {project.dims.cols}×{project.dims.rows} diamonds</h2>
       <ol className="chart-legend">
         {project.palette.colors.map((c, i) => (
           <li key={c.id}>
-            <span className="swatch" style={{ background: c.hex }} /> {i + 1} — {c.name} ({c.hex})
+            <span className="inline-block size-4 rounded border border-neutral-300" style={{ background: c.hex }} /> {i + 1} — {c.name} ({c.hex})
           </li>
         ))}
       </ol>
