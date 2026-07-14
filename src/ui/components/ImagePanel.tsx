@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useStore } from '../store'
 import { designSize } from '../../core/lattice'
 import { isKnownUnsupported, loadImageFile, sampleHeartImage } from '../imageLoad'
+import { Button } from '@/components/ui/button'
 
 export function ImagePanel() {
   const image = useStore(s => s.project.image)
@@ -54,10 +55,10 @@ export function ImagePanel() {
   const step = designSize(useStore.getState().project.dims).width * 0.05
 
   return (
-    <div className="panel">
-      <h3>Image</h3>
+    <div className="flex flex-col gap-2 border-b p-3">
+      <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Image</h3>
       <div
-        className="dropzone"
+        className="rounded-md border-2 border-dashed border-muted-foreground/40 p-3 text-center text-sm text-muted-foreground"
         onDragOver={e => e.preventDefault()}
         onDrop={e => {
           e.preventDefault()
@@ -65,33 +66,33 @@ export function ImagePanel() {
           if (file) void onFile(file)
         }}
       >
-        <label>
+        <label className="inline-flex h-8 cursor-pointer items-center justify-center rounded-md border border-input bg-background px-2.5 text-sm shadow-xs hover:bg-muted dark:border-input dark:bg-input/30 dark:hover:bg-input/50">
           Choose image
           <input
             type="file" accept="image/*" hidden
             onChange={e => { const f = e.target.files?.[0]; if (f) void onFile(f) }}
           />
         </label>
-        <p>or drag & drop / paste</p>
+        <p className="mt-1">or drag & drop / paste</p>
       </div>
-      {error && <p className="error" role="alert">{error}</p>}
+      {error && <p className="text-destructive text-sm" role="alert">{error}</p>}
       {!image && (
-        <button onClick={() => {
+        <Button variant="outline" size="sm" onClick={() => {
           const s = sampleHeartImage()
           useStore.getState().setImage({ dataUrl: s.dataUrl, width: s.width, height: s.height }, s.imageData)
         }}>
           Try a sample image
-        </button>
+        </Button>
       )}
       {image && (
-        <div className="image-controls">
-          <button onClick={() => zoomImage(1.1)}>Bigger</button>
-          <button onClick={() => zoomImage(1 / 1.1)}>Smaller</button>
-          <button onClick={() => nudge(-step, 0)}>←</button>
-          <button onClick={() => nudge(step, 0)}>→</button>
-          <button onClick={() => nudge(0, -step)}>↑</button>
-          <button onClick={() => nudge(0, step)}>↓</button>
-          <button onClick={() => useStore.getState().fitImage()}>Fit</button>
+        <div className="flex flex-wrap gap-1">
+          <Button variant="outline" size="sm" onClick={() => zoomImage(1.1)}>Bigger</Button>
+          <Button variant="outline" size="sm" onClick={() => zoomImage(1 / 1.1)}>Smaller</Button>
+          <Button variant="outline" size="sm" onClick={() => nudge(-step, 0)}>←</Button>
+          <Button variant="outline" size="sm" onClick={() => nudge(step, 0)}>→</Button>
+          <Button variant="outline" size="sm" onClick={() => nudge(0, -step)}>↑</Button>
+          <Button variant="outline" size="sm" onClick={() => nudge(0, step)}>↓</Button>
+          <Button variant="outline" size="sm" onClick={() => useStore.getState().fitImage()}>Fit</Button>
         </div>
       )}
     </div>
