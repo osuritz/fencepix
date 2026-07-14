@@ -19,23 +19,7 @@ body { font-family: system-ui, sans-serif; font-size: 14px; color: #1a1a1a; }
   .chart-page { page-break-after: always; }
 }
 
-.app-shell { display: grid; grid-template-columns: 280px 1fr 300px; height: 100%; }
-.sidebar { overflow-y: auto; border-right: 1px solid #ddd; }
-.output-panel { overflow-y: auto; border-left: 1px solid #ddd; }
-.output-panel nav { display: flex; gap: 4px; padding: 8px; border-bottom: 1px solid #ddd; }
-.canvas-area { display: flex; flex-direction: column; min-width: 0; }
-.fence-canvas { flex: 1; width: 100%; touch-action: none; cursor: crosshair; }
-.toolbar { display: flex; gap: 4px; align-items: center; padding: 8px; border-bottom: 1px solid #ddd; }
-.toolbar .hint { margin-left: auto; color: #777; font-size: 12px; }
-.panel { padding: 12px; border-bottom: 1px solid #eee; display: flex; flex-direction: column; gap: 8px; }
-.panel h3 { font-size: 13px; text-transform: uppercase; color: #555; }
-.panel label { display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
-.panel table { border-collapse: collapse; }
-.panel td, .panel th { padding: 2px 8px; text-align: left; }
 .swatch { display: inline-block; width: 18px; height: 18px; border: 1px solid #0002; border-radius: 3px; }
-.current-color { width: 22px; height: 22px; border: 1px solid #0004; border-radius: 3px; }
-.error { color: #b00020; }
-.autosave-banner { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); background: #b00020; color: #fff; padding: 8px 16px; border-radius: 6px; z-index: 20; }
 
 @theme inline { --font-heading: var(--font-sans); --font-sans: system-ui, sans-serif; --color-sidebar-ring: var(--sidebar-ring); --color-sidebar-border: var(--sidebar-border); --color-sidebar-accent-foreground: var(--sidebar-accent-foreground); --color-sidebar-accent: var(--sidebar-accent); --color-sidebar-primary-foreground: var(--sidebar-primary-foreground); --color-sidebar-primary: var(--sidebar-primary); --color-sidebar-foreground: var(--sidebar-foreground); --color-sidebar: var(--sidebar); --color-chart-5: var(--chart-5); --color-chart-4: var(--chart-4); --color-chart-3: var(--chart-3); --color-chart-2: var(--chart-2); --color-chart-1: var(--chart-1); --color-ring: var(--ring); --color-input: var(--input); --color-border: var(--border); --color-destructive: var(--destructive); --color-accent-foreground: var(--accent-foreground); --color-accent: var(--accent); --color-muted-foreground: var(--muted-foreground); --color-muted: var(--muted); --color-secondary-foreground: var(--secondary-foreground); --color-secondary: var(--secondary); --color-primary-foreground: var(--primary-foreground); --color-primary: var(--primary); --color-popover-foreground: var(--popover-foreground); --color-popover: var(--popover); --color-card-foreground: var(--card-foreground); --color-card: var(--card); --color-foreground: var(--foreground); --color-background: var(--background); --radius-sm: calc(var(--radius) * 0.6); --radius-md: calc(var(--radius) * 0.8); --radius-lg: var(--radius); --radius-xl: calc(var(--radius) * 1.4); --radius-2xl: calc(var(--radius) * 1.8); --radius-3xl: calc(var(--radius) * 2.2); --radius-4xl: calc(var(--radius) * 2.6); }
 

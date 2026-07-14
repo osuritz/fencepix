@@ -86,7 +86,7 @@ export function FenceCanvas() {
   return (
     <canvas
       ref={canvasRef}
-      className="fence-canvas"
+      className="flex-1 w-full touch-none cursor-crosshair"
       onPointerDown={e => {
         e.currentTarget.setPointerCapture(e.pointerId)
         if (spaceRef.current || e.button === 1) {

@@ -25,18 +25,27 @@ export function Toolbar() {
   const { setTheme } = useTheme()
 
   return (
-    <div className="toolbar">
+    <div className="flex items-center gap-1 border-b p-2">
       {TOOLS.map(t => (
-        <button key={t.id} aria-pressed={tool === t.id}
-          onClick={() => useStore.getState().setTool(t.id)}>
+        <Button
+          key={t.id}
+          variant="outline"
+          size="sm"
+          aria-pressed={tool === t.id}
+          className="aria-pressed:bg-secondary aria-pressed:text-secondary-foreground"
+          onClick={() => useStore.getState().setTool(t.id)}
+        >
           {t.label}
-        </button>
+        </Button>
       ))}
-      <span className="current-color" title={selected?.name ?? 'no color selected'}
-        style={{ background: selected?.hex ?? 'transparent' }} />
-      <button disabled={!canUndo} onClick={() => useStore.getState().undo()}>Undo</button>
-      <button disabled={!canRedo} onClick={() => useStore.getState().redo()}>Redo</button>
-      <span className="hint">scroll = zoom · space-drag = pan</span>
+      <span
+        className="size-[22px] shrink-0 rounded-sm border border-border"
+        title={selected?.name ?? 'no color selected'}
+        style={{ background: selected?.hex ?? 'transparent' }}
+      />
+      <Button variant="outline" size="sm" disabled={!canUndo} onClick={() => useStore.getState().undo()}>Undo</Button>
+      <Button variant="outline" size="sm" disabled={!canRedo} onClick={() => useStore.getState().redo()}>Redo</Button>
+      <span className="ml-auto text-xs text-muted-foreground">scroll = zoom · space-drag = pan</span>
       <DropdownMenu>
         <DropdownMenuTrigger
           render={

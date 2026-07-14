@@ -12,6 +12,7 @@ import { Toolbar } from './ui/components/Toolbar'
 import { ShoppingListTab } from './ui/components/ShoppingListTab'
 import { ExportTab } from './ui/components/ExportTab'
 import { PrintChart } from './ui/components/PrintChart'
+import { Button } from '@/components/ui/button'
 
 export default function App() {
   const [tab, setTab] = useState<'shopping' | 'export'>('shopping')
@@ -72,28 +73,47 @@ export default function App() {
 
   return (
     <>
-      <div className="app-shell">
-        <aside className="sidebar">
+      <div className="app-shell grid h-full grid-cols-[280px_1fr_300px]">
+        <aside className="overflow-y-auto border-r">
           <FenceSetupPanel />
           <ImagePanel />
           <PalettePanel />
           <PixelationPanel />
         </aside>
-        <main className="canvas-area">
+        <main className="flex min-w-0 flex-col">
           <Toolbar />
           <FenceCanvas />
         </main>
-        <section className="output-panel">
-          <nav>
-            <button aria-pressed={tab === 'shopping'} onClick={() => setTab('shopping')}>Shopping list</button>
-            <button aria-pressed={tab === 'export'} onClick={() => setTab('export')}>Export</button>
-            <button onClick={() => setShowChart(true)}>Print chart</button>
+        <section className="overflow-y-auto border-l">
+          <nav className="flex gap-1 border-b p-2">
+            <Button
+              variant="outline"
+              size="sm"
+              aria-pressed={tab === 'shopping'}
+              className="aria-pressed:bg-secondary aria-pressed:text-secondary-foreground"
+              onClick={() => setTab('shopping')}
+            >
+              Shopping list
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              aria-pressed={tab === 'export'}
+              className="aria-pressed:bg-secondary aria-pressed:text-secondary-foreground"
+              onClick={() => setTab('export')}
+            >
+              Export
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setShowChart(true)}>Print chart</Button>
           </nav>
           {tab === 'shopping' ? <ShoppingListTab /> : <ExportTab />}
         </section>
       </div>
       {autosaveError && (
-        <div className="autosave-banner no-print" role="alert">
+        <div
+          className="no-print fixed bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-md bg-destructive px-4 py-2 text-destructive-foreground"
+          role="alert"
+        >
           Couldn't autosave — use Export to keep your work.
         </div>
       )}

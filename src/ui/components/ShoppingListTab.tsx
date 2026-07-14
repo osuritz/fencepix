@@ -1,6 +1,9 @@
 import { useStore } from '../store'
 import { composite } from '../../core/grid'
 import { shoppingList } from '../../core/shopping'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
 
 export function ShoppingListTab() {
   const project = useStore(s => s.project)
@@ -16,34 +19,58 @@ export function ShoppingListTab() {
     void navigator.clipboard.writeText(`${text}\nTotal: ${total}`)
   }
 
-  if (lines.length === 0) return <p className="panel">Nothing to buy yet — load an image or paint some diamonds.</p>
+  if (lines.length === 0) {
+    return (
+      <p className="p-3 text-sm text-muted-foreground">
+        Nothing to buy yet — load an image or paint some diamonds.
+      </p>
+    )
+  }
 
   return (
-    <div className="panel">
-      <label>Overage %
-        <input
+    <div className="flex flex-col gap-2 p-3">
+      <Label className="flex flex-col items-start gap-1 text-xs font-normal text-foreground">
+        Overage %
+        <Input
           type="number" min={0} max={100} value={project.settings.overagePct}
+          className="h-8 w-20 text-sm"
           onChange={e => useStore.getState().setSettings({ overagePct: Math.max(0, +e.target.value) })}
         />
-      </label>
-      <table>
-        <thead><tr><th /><th>Color</th><th>Used</th><th>Buy</th></tr></thead>
+      </Label>
+      <table className="text-sm">
+        <thead>
+          <tr>
+            <th />
+            <th className="p-1 text-left">Color</th>
+            <th className="p-1 text-left">Used</th>
+            <th className="p-1 text-left">Buy</th>
+          </tr>
+        </thead>
         <tbody>
           {lines.map(l => {
             const c = byId.get(l.colorId)
             return (
               <tr key={l.colorId}>
-                <td><span className="swatch" style={{ background: c?.hex }} /></td>
-                <td>{c?.name ?? `color ${l.colorId}`}</td>
-                <td>{l.count}</td>
-                <td>{l.withOverage}</td>
+                <td className="p-1">
+                  <span className="inline-block size-4 rounded border border-border" style={{ background: c?.hex }} />
+                </td>
+                <td className="p-1">{c?.name ?? `color ${l.colorId}`}</td>
+                <td className="p-1 tabular-nums">{l.count}</td>
+                <td className="p-1 tabular-nums">{l.withOverage}</td>
               </tr>
             )
           })}
         </tbody>
-        <tfoot><tr><td /><td>Total</td><td /><td>{total}</td></tr></tfoot>
+        <tfoot>
+          <tr>
+            <td />
+            <td className="p-1 font-medium">Total</td>
+            <td />
+            <td className="p-1 font-medium tabular-nums">{total}</td>
+          </tr>
+        </tfoot>
       </table>
-      <button onClick={copy}>Copy as text</button>
+      <Button variant="outline" size="sm" onClick={copy}>Copy as text</Button>
     </div>
   )
 }

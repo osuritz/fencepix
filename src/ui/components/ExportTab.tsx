@@ -3,6 +3,7 @@ import { useStore } from '../store'
 import { deserializeProject, serializeProject } from '../../core/project'
 import { decodeDataUrl } from '../imageLoad'
 import { renderPngBlob } from '../exportPng'
+import { Button } from '@/components/ui/button'
 
 function downloadBlob(blob: Blob, name: string) {
   const url = URL.createObjectURL(blob)
@@ -17,21 +18,22 @@ export function ExportTab() {
   const [error, setError] = useState<string | null>(null)
 
   return (
-    <div className="panel">
-      <button onClick={async () => {
+    <div className="flex flex-col gap-2 p-3">
+      <Button variant="outline" size="sm" onClick={async () => {
         try {
           downloadBlob(await renderPngBlob(useStore.getState().project), 'fencepix.png')
         } catch { setError('PNG export failed.') }
       }}>
         Download PNG
-      </button>
-      <button onClick={() => {
+      </Button>
+      <Button variant="outline" size="sm" onClick={() => {
         const json = serializeProject(useStore.getState().project)
         downloadBlob(new Blob([json], { type: 'application/json' }), 'design.fencepix.json')
       }}>
         Download project
-      </button>
-      <label>Import project
+      </Button>
+      <label className="inline-flex h-8 cursor-pointer items-center justify-center rounded-md border border-input bg-background px-2.5 text-sm shadow-xs hover:bg-muted dark:border-input dark:bg-input/30 dark:hover:bg-input/50">
+        Import project
         <input type="file" accept=".json,application/json" hidden
           onChange={async e => {
             const file = e.target.files?.[0]
@@ -46,7 +48,7 @@ export function ExportTab() {
             }
           }} />
       </label>
-      {error && <p className="error" role="alert">{error}</p>}
+      {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
     </div>
   )
 }
