@@ -33,7 +33,7 @@ export function PalettePanel() {
         {palette.colors.map(c => (
           <li key={c.id} className="flex items-center gap-1">
             <button
-              className="size-[22px] shrink-0 cursor-pointer rounded-sm border border-border aria-pressed:ring-2 aria-pressed:ring-ring aria-pressed:ring-offset-1"
+              className="size-[22px] shrink-0 cursor-pointer rounded-sm border border-border aria-pressed:ring-2 aria-pressed:ring-ring aria-pressed:ring-offset-1 aria-pressed:ring-offset-background"
               style={{ background: c.hex }}
               aria-pressed={selectedColorId === c.id}
               aria-label={`select ${c.name}`}
