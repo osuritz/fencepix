@@ -2,11 +2,20 @@ import { useCallback, useEffect, useRef } from 'react'
 import { useStore } from '../store'
 import { cellAt } from '../../core/lattice'
 import { composite } from '../../core/grid'
-import { canvasColors, drawDesign, screenToDesign, type Viewport } from '../render'
+import {
+  canvasColors,
+  DEFAULT_VIEW,
+  drawDesign,
+  fitView,
+  panBy,
+  screenToDesign,
+  zoomAt,
+  type Viewport,
+} from '../render'
 
 export function FenceCanvas() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const viewRef = useRef<Viewport>({ offsetX: 24, offsetY: 24, pxPerUnit: 12 })
+  const viewRef = useRef<Viewport>({ ...DEFAULT_VIEW })
   const panRef = useRef<{ x: number; y: number; ox: number; oy: number } | null>(null)
   const strokingRef = useRef(false)
   const spaceRef = useRef(false)
@@ -45,15 +54,39 @@ export function FenceCanvas() {
       if (e.type === 'keyup') { spaceRef.current = false; return }
       if (e.target === document.body) { spaceRef.current = true; e.preventDefault() }
     }
+    const onZoomKey = (e: KeyboardEvent) => {
+      if (!(e.metaKey || e.ctrlKey)) return
+      const t = e.target as HTMLElement
+      if (t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement || t.isContentEditable) return
+      const c = canvasRef.current
+      if (!c) return
+      const cx = c.clientWidth / 2
+      const cy = c.clientHeight / 2
+      if (e.key === '=' || e.key === '+') {
+        viewRef.current = zoomAt(viewRef.current, cx, cy, 1.25)
+      } else if (e.key === '-') {
+        viewRef.current = zoomAt(viewRef.current, cx, cy, 1 / 1.25)
+      } else if (e.key === '0') {
+        viewRef.current = fitView(useStore.getState().project.dims, c.clientWidth, c.clientHeight)
+      } else if (e.key === '1') {
+        viewRef.current = zoomAt(viewRef.current, cx, cy, DEFAULT_VIEW.pxPerUnit / viewRef.current.pxPerUnit)
+      } else {
+        return
+      }
+      e.preventDefault()
+      draw()
+    }
     window.addEventListener('resize', draw)
     window.addEventListener('keydown', onKey)
     window.addEventListener('keyup', onKey)
+    window.addEventListener('keydown', onZoomKey)
     return () => {
       unsub()
       observer.disconnect()
       window.removeEventListener('resize', draw)
       window.removeEventListener('keydown', onKey)
       window.removeEventListener('keyup', onKey)
+      window.removeEventListener('keydown', onZoomKey)
     }
   }, [draw])
 
@@ -65,12 +98,21 @@ export function FenceCanvas() {
     if (!canvas) return
     const onWheel = (e: WheelEvent) => {
       e.preventDefault()
-      const rect = canvas.getBoundingClientRect()
-      const mx = e.clientX - rect.left, my = e.clientY - rect.top
-      const v = viewRef.current
-      const before = screenToDesign(v, mx, my)
-      const pxPerUnit = Math.min(100, Math.max(2, v.pxPerUnit * Math.exp(-e.deltaY * 0.0015)))
-      viewRef.current = { pxPerUnit, offsetX: mx - before.x * pxPerUnit, offsetY: my - before.y * pxPerUnit }
+      if (e.ctrlKey || e.metaKey) {
+        // Zoom at cursor. Trackpad pinch arrives as ctrl+wheel with small deltas;
+        // 0.0035 balances mouse-notch (~30%/notch) and pinch smoothness.
+        const rect = canvas.getBoundingClientRect()
+        viewRef.current = zoomAt(
+          viewRef.current,
+          e.clientX - rect.left,
+          e.clientY - rect.top,
+          Math.exp(-e.deltaY * 0.0035),
+        )
+      } else if (e.shiftKey && e.deltaX === 0) {
+        viewRef.current = panBy(viewRef.current, e.deltaY, 0) // mouse: shift+wheel pans horizontally
+      } else {
+        viewRef.current = panBy(viewRef.current, e.deltaX, e.deltaY)
+      }
       draw()
     }
     canvas.addEventListener('wheel', onWheel, { passive: false })

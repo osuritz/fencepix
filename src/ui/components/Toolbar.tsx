@@ -46,7 +46,7 @@ export function Toolbar() {
       />
       <Button variant="outline" size="sm" disabled={!canUndo} onClick={() => useStore.getState().undo()}>Undo</Button>
       <Button variant="outline" size="sm" disabled={!canRedo} onClick={() => useStore.getState().redo()}>Redo</Button>
-      <span className="ml-auto text-xs text-muted-foreground">scroll = zoom · space-drag = pan</span>
+      <span className="ml-auto text-xs text-muted-foreground">scroll = pan · ⌘/ctrl+scroll = zoom · ⌘0 = fit · space-drag = pan</span>
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
