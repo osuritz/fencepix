@@ -37,5 +37,14 @@ description: Build, launch, and drive fencepix end-to-end for verification
 
 ## Gotchas
 
+- **Port squatting:** if another Vite instance holds 5173 (zombie from an earlier
+  session/subagent), `npm run dev` silently binds 5174+ — ALWAYS grep the dev log
+  for "Local:" and use that URL. Before trusting any measurement, confirm the page
+  runs HEAD's code (e.g., the toolbar hint text matches the current source).
+  A stale 5173 server once absorbed an entire gesture-verification session.
+- Canvas pixel probes are fragile (canvas resizes between reads, edge clipping
+  skews bounding boxes). Prefer semantic checks (shopping-list rows, hint text)
+  and reversibility assertions (gesture + inverse → exact original state).
+
 - Browser requests /favicon.ico → 404 in console (no favicon shipped); benign.
 - DevTools flags "form field should have id or name" issues (aria-label-only inputs).
