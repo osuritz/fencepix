@@ -1,8 +1,42 @@
-import { cellCenter, type GridDims } from '../core/lattice'
+import { cellCenter, designSize, type GridDims } from '../core/lattice'
 import { EMPTY } from '../core/grid'
 import type { Palette } from '../core/palette'
 
 export interface Viewport { offsetX: number; offsetY: number; pxPerUnit: number }
+
+export const MIN_PPU = 2
+export const MAX_PPU = 100
+export const DEFAULT_VIEW: Viewport = { offsetX: 24, offsetY: 24, pxPerUnit: 12 }
+
+const clampPpu = (ppu: number) => Math.min(MAX_PPU, Math.max(MIN_PPU, ppu))
+
+// Pan by scroll deltas: content follows the gesture, so offsets move opposite.
+export function panBy(v: Viewport, dx: number, dy: number): Viewport {
+  return { ...v, offsetX: v.offsetX - dx, offsetY: v.offsetY - dy }
+}
+
+// Zoom by factor keeping the design point under (anchorX, anchorY) fixed.
+export function zoomAt(v: Viewport, anchorX: number, anchorY: number, factor: number): Viewport {
+  const pxPerUnit = clampPpu(v.pxPerUnit * factor)
+  const before = screenToDesign(v, anchorX, anchorY)
+  return {
+    pxPerUnit,
+    offsetX: anchorX - before.x * pxPerUnit,
+    offsetY: anchorY - before.y * pxPerUnit,
+  }
+}
+
+// Fit the whole design in the canvas with 5% padding, centered.
+export function fitView(d: GridDims, width: number, height: number): Viewport {
+  const ds = designSize(d)
+  if (ds.width <= 0 || ds.height <= 0 || width <= 0 || height <= 0) return DEFAULT_VIEW
+  const pxPerUnit = clampPpu(Math.min(width / ds.width, height / ds.height) * 0.95)
+  return {
+    pxPerUnit,
+    offsetX: (width - ds.width * pxPerUnit) / 2,
+    offsetY: (height - ds.height * pxPerUnit) / 2,
+  }
+}
 
 export function designToScreen(v: Viewport, x: number, y: number) {
   return { x: v.offsetX + x * v.pxPerUnit, y: v.offsetY + y * v.pxPerUnit }
