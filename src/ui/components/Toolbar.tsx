@@ -1,6 +1,7 @@
 import { Moon, Sun } from 'lucide-react'
 import { useStore, type Tool } from '../store'
 import { useTheme } from '../theme'
+import { PRESSED } from '../classes'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -32,7 +33,7 @@ export function Toolbar() {
           variant="outline"
           size="sm"
           aria-pressed={tool === t.id}
-          className="aria-pressed:bg-secondary aria-pressed:text-secondary-foreground"
+          className={PRESSED}
           onClick={() => useStore.getState().setTool(t.id)}
         >
           {t.label}

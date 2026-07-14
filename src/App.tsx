@@ -12,6 +12,7 @@ import { Toolbar } from './ui/components/Toolbar'
 import { ShoppingListTab } from './ui/components/ShoppingListTab'
 import { ExportTab } from './ui/components/ExportTab'
 import { PrintChart } from './ui/components/PrintChart'
+import { PRESSED } from './ui/classes'
 import { Button } from '@/components/ui/button'
 
 export default function App() {
@@ -90,7 +91,7 @@ export default function App() {
               variant="outline"
               size="sm"
               aria-pressed={tab === 'shopping'}
-              className="aria-pressed:bg-secondary aria-pressed:text-secondary-foreground"
+              className={PRESSED}
               onClick={() => setTab('shopping')}
             >
               Shopping list
@@ -99,7 +100,7 @@ export default function App() {
               variant="outline"
               size="sm"
               aria-pressed={tab === 'export'}
-              className="aria-pressed:bg-secondary aria-pressed:text-secondary-foreground"
+              className={PRESSED}
               onClick={() => setTab('export')}
             >
               Export

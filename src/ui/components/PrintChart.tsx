@@ -19,7 +19,7 @@ export function PrintChart({ onClose }: { onClose: () => void }) {
         <Button variant="outline" size="sm" onClick={() => window.print()}>Print</Button>
         <Button variant="outline" size="sm" onClick={onClose}>Close</Button>
       </div>
-      <h2>Installation chart — {project.dims.cols}×{project.dims.rows} diamonds</h2>
+      <h2 className="text-lg font-semibold my-2">Installation chart — {project.dims.cols}×{project.dims.rows} diamonds</h2>
       <ol className="chart-legend">
         {project.palette.colors.map((c, i) => (
           <li key={c.id}>
@@ -27,7 +27,7 @@ export function PrintChart({ onClose }: { onClose: () => void }) {
           </li>
         ))}
       </ol>
-      <p>Rows count top→bottom, columns left→right. Odd rows sit half a diamond to the right.</p>
+      <p className="my-2">Rows count top→bottom, columns left→right. Odd rows sit half a diamond to the right.</p>
       {pages.map(page => {
         const minX = page.colStart * 2
         const maxX = page.colEnd * 2 + 1
@@ -35,7 +35,7 @@ export function PrintChart({ onClose }: { onClose: () => void }) {
         const maxY = page.rowEnd + 1
         return (
           <div className="chart-page" key={`${page.pageRow}-${page.pageCol}`}>
-            <h3>
+            <h3 className="mt-3 mb-1 font-medium">
               Page {page.pageRow + 1}-{page.pageCol + 1} — rows {page.rowStart + 1}–{page.rowEnd},
               columns {page.colStart + 1}–{page.colEnd}
             </h3>
