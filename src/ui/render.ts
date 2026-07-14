@@ -32,9 +32,21 @@ function diamondPath(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: n
   ctx.closePath()
 }
 
+export const LIGHT_GROUND = '#e8eaec'
+export const LIGHT_WIRE = '#9aa1a6'
+
+export function canvasColors(el: HTMLElement): { ground: string; wire: string } {
+  const s = getComputedStyle(el)
+  return {
+    ground: s.getPropertyValue('--canvas-ground').trim() || LIGHT_GROUND,
+    wire: s.getPropertyValue('--canvas-wire').trim() || LIGHT_WIRE,
+  }
+}
+
 export function drawDesign(
   ctx: CanvasRenderingContext2D, d: GridDims, cells: Uint16Array,
   palette: Palette, v: Viewport, size: { width: number; height: number },
+  wire: string = LIGHT_WIRE,
 ): void {
   const colorById = new Map(palette.colors.map(c => [c.id, c.hex]))
   const { rowMin, rowMax, colMin, colMax } = visibleRange(v, size.width, size.height, d)
@@ -49,7 +61,7 @@ export function drawDesign(
         ctx.fillStyle = colorById.get(id) ?? '#ff00ff'
         ctx.fill()
       }
-      ctx.strokeStyle = '#9aa1a6'
+      ctx.strokeStyle = wire
       ctx.lineWidth = 1
       ctx.stroke()
     }

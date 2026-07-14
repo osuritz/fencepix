@@ -9,3 +9,10 @@ import { cleanup } from '@testing-library/react'
 afterEach(() => {
   cleanup()
 })
+
+// jsdom does not implement matchMedia; ThemeProvider and Base UI components
+// call it, so provide a minimal stub.
+if (!window.matchMedia) {
+  window.matchMedia = (query: string) =>
+    ({ matches: false, media: query, addEventListener() {}, removeEventListener() {} }) as unknown as MediaQueryList
+}

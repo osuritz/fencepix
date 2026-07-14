@@ -1,4 +1,13 @@
+import { Moon, Sun } from 'lucide-react'
 import { useStore, type Tool } from '../store'
+import { useTheme } from '../theme'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 const TOOLS: Array<{ id: Tool; label: string }> = [
   { id: 'paint', label: 'Paint' },
@@ -13,6 +22,7 @@ export function Toolbar() {
   const canUndo = useStore(s => s.undoStack.length > 0)
   const canRedo = useStore(s => s.redoStack.length > 0)
   const selected = palette.colors.find(c => c.id === selectedColorId)
+  const { setTheme } = useTheme()
 
   return (
     <div className="toolbar">
@@ -27,6 +37,21 @@ export function Toolbar() {
       <button disabled={!canUndo} onClick={() => useStore.getState().undo()}>Undo</button>
       <button disabled={!canRedo} onClick={() => useStore.getState().redo()}>Redo</button>
       <span className="hint">scroll = zoom · space-drag = pan</span>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button variant="ghost" size="icon-sm" className="relative" aria-label="Toggle theme">
+              <Sun className="scale-100 rotate-0 dark:scale-0 dark:-rotate-90" />
+              <Moon className="absolute scale-0 rotate-90 dark:scale-100 dark:rotate-0" />
+            </Button>
+          }
+        />
+        <DropdownMenuContent>
+          <DropdownMenuItem onClick={() => setTheme('light')}>Light</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setTheme('dark')}>Dark</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setTheme('system')}>System</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   )
 }

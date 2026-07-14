@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from 'react'
 import { useStore } from '../store'
 import { cellAt } from '../../core/lattice'
 import { composite } from '../../core/grid'
-import { drawDesign, screenToDesign, type Viewport } from '../render'
+import { canvasColors, drawDesign, screenToDesign, type Viewport } from '../render'
 
 export function FenceCanvas() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -24,17 +24,22 @@ export function FenceCanvas() {
     }
     ctx.save()
     ctx.scale(dpr, dpr)
-    ctx.fillStyle = '#e8eaec'
+    const { ground, wire } = canvasColors(canvas)
+    ctx.fillStyle = ground
     ctx.fillRect(0, 0, w, h)
     const { project } = useStore.getState()
     drawDesign(ctx, project.dims, composite(project.base, project.overlay),
-      project.palette, viewRef.current, { width: w, height: h })
+      project.palette, viewRef.current, { width: w, height: h }, wire)
     ctx.restore()
   }, [])
 
   useEffect(() => {
     draw()
     const unsub = useStore.subscribe(draw)
+    // Theme toggles flip the `dark` class on <html>; repaint so the canvas
+    // picks up the new --canvas-ground/--canvas-wire values.
+    const observer = new MutationObserver(draw)
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
     const onKey = (e: KeyboardEvent) => {
       if (e.code !== 'Space') return
       if (e.type === 'keyup') { spaceRef.current = false; return }
@@ -45,6 +50,7 @@ export function FenceCanvas() {
     window.addEventListener('keyup', onKey)
     return () => {
       unsub()
+      observer.disconnect()
       window.removeEventListener('resize', draw)
       window.removeEventListener('keydown', onKey)
       window.removeEventListener('keyup', onKey)

@@ -1,7 +1,7 @@
 import { designSize, type GridDims } from '../core/lattice'
 import { composite } from '../core/grid'
 import type { Project } from '../core/project'
-import { drawDesign } from './render'
+import { drawDesign, LIGHT_GROUND, LIGHT_WIRE } from './render'
 
 export const EXPORT_PX_PER_UNIT = 12 // 24 px per diamond (a diamond is 2 units)
 export const MAX_EXPORT_SIDE = 8192
@@ -21,11 +21,11 @@ export function renderPngBlob(p: Project): Promise<Blob> {
   canvas.width = Math.ceil(ds.width * ppu)
   canvas.height = Math.ceil(ds.height * ppu)
   const ctx = canvas.getContext('2d')!
-  ctx.fillStyle = '#e8eaec'
+  ctx.fillStyle = LIGHT_GROUND
   ctx.fillRect(0, 0, canvas.width, canvas.height)
   drawDesign(ctx, p.dims, composite(p.base, p.overlay), p.palette,
     { offsetX: 0, offsetY: 0, pxPerUnit: ppu },
-    { width: canvas.width, height: canvas.height })
+    { width: canvas.width, height: canvas.height }, LIGHT_WIRE)
   return new Promise((resolve, reject) => {
     canvas.toBlob(b => (b ? resolve(b) : reject(new Error('PNG export failed'))), 'image/png')
   })
