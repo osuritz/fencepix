@@ -51,4 +51,34 @@ describe('deserialize rejects invalid input', () => {
     bad.palette.colors[0] = {}
     expect(() => deserializeProject(JSON.stringify(bad))).toThrow('invalid project file')
   })
+  test('dims exceed the cell cap', () => {
+    const bad = JSON.parse(serializeProject(defaultProject()))
+    bad.dims = { cols: 500, rows: 2000 }
+    expect(() => deserializeProject(JSON.stringify(bad))).toThrow('invalid project file')
+  })
+  test('negative dims', () => {
+    const bad = JSON.parse(serializeProject(defaultProject()))
+    bad.dims = { cols: -5, rows: -4 }
+    expect(() => deserializeProject(JSON.stringify(bad))).toThrow('invalid project file')
+  })
+  test('non-data-url image dataUrl', () => {
+    const bad = JSON.parse(serializeProject(defaultProject()))
+    bad.image = { dataUrl: 'https://evil.example/x.png', width: 10, height: 8 }
+    expect(() => deserializeProject(JSON.stringify(bad))).toThrow('invalid project file')
+  })
+  test('zero transform scale', () => {
+    const bad = JSON.parse(serializeProject(defaultProject()))
+    bad.transform.scale = 0
+    expect(() => deserializeProject(JSON.stringify(bad))).toThrow('invalid project file')
+  })
+  test('alphaThreshold out of range', () => {
+    const bad = JSON.parse(serializeProject(defaultProject()))
+    bad.settings.alphaThreshold = 2
+    expect(() => deserializeProject(JSON.stringify(bad))).toThrow('invalid project file')
+  })
+  test('palette nextId not past max id', () => {
+    const bad = JSON.parse(serializeProject(defaultProject()))
+    bad.palette.nextId = 3
+    expect(() => deserializeProject(JSON.stringify(bad))).toThrow('invalid project file')
+  })
 })

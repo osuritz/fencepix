@@ -1,6 +1,6 @@
-import { gridFromPhysical, type GridDims } from './lattice'
+import { gridFromPhysical, MAX_CELLS, type GridDims } from './lattice'
 import { createCells } from './grid'
-import { CLASSIC_12, createPalette, type Palette } from './palette'
+import { CLASSIC_12, createPalette, MAX_COLOR_ID, type Palette } from './palette'
 import type { ImageTransform } from './sample'
 
 export interface ProjectSettings { dither: boolean; alphaThreshold: number; overagePct: number }
@@ -73,20 +73,32 @@ export function deserializeProject(json: string): Project {
   if (typeof raw !== 'object' || raw === null || raw.version !== 1) invalid()
   const dims = raw.dims as GridDims
   if (!dims || !Number.isInteger(dims.cols) || !Number.isInteger(dims.rows)) invalid()
+  // Bounds-check dims before touching the (attacker-controlled) grid
+  // payloads below, so an oversized/negative grid is rejected up front
+  // regardless of what base/overlay contain.
+  if (dims.cols < 0 || dims.rows < 0 || dims.cols * dims.rows > MAX_CELLS) invalid()
   if (typeof raw.base !== 'string' || typeof raw.overlay !== 'string') invalid()
   const palette = raw.palette as Palette
   if (!palette || !Array.isArray(palette.colors) || !Number.isInteger(palette.nextId)
     || palette.colors.some(c => !c || !Number.isInteger(c.id)
       || typeof c.name !== 'string' || typeof c.hex !== 'string')) invalid()
+  if (palette.colors.some(c => c.id < 1 || c.id > MAX_COLOR_ID)
+    || palette.nextId <= Math.max(0, ...palette.colors.map(c => c.id))) invalid()
   const settings = raw.settings as ProjectSettings
   if (!settings || typeof settings.dither !== 'boolean'
     || typeof settings.alphaThreshold !== 'number' || typeof settings.overagePct !== 'number') invalid()
+  if (settings.alphaThreshold < 0 || settings.alphaThreshold > 1 || !(settings.overagePct >= 0)) invalid()
   const transform = raw.transform as ImageTransform
   if (!transform || typeof transform.x !== 'number' || typeof transform.y !== 'number'
     || typeof transform.scale !== 'number') invalid()
+  if (!Number.isFinite(transform.x) || !Number.isFinite(transform.y)
+    || !Number.isFinite(transform.scale) || transform.scale <= 0) invalid()
   const image = raw.image as Project['image']
   if (image !== null && (typeof image !== 'object' || typeof image.dataUrl !== 'string'
     || typeof image.width !== 'number' || typeof image.height !== 'number')) invalid()
+  // Reject non-data URLs: without this, a crafted project file with an
+  // https:// dataUrl makes the app fetch an attacker-controlled host on import.
+  if (image !== null && !image.dataUrl.startsWith('data:image/')) invalid()
 
   let base: Uint16Array, overlay: Uint16Array
   try {

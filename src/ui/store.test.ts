@@ -89,6 +89,16 @@ test('paletteRemove remaps or clears overlay uses and re-quantizes', () => {
   expect(useStore.getState().project.overlay[cellIndex(2, 2, d)]).toBe(OVERLAY_EMPTY)
 })
 
+test('palette operations clear undo history so undo cannot resurrect removed ids', () => {
+  const s = useStore.getState()
+  s.setTool('paint'); s.selectColor(4); s.beginStroke(); s.applyTool(0, 0)
+  s.paletteRemove(4, null)
+  expect(useStore.getState().undoStack).toHaveLength(0)
+  expect(useStore.getState().redoStack).toHaveLength(0)
+  s.undo() // must be a no-op
+  expect(useStore.getState().project.overlay[0]).toBe(OVERLAY_EMPTY)
+})
+
 test('eyedropper selects the composited color and never begins a stroke', () => {
   const s = useStore.getState()
   s.setTool('paint'); s.selectColor(6); s.beginStroke(); s.applyTool(1, 2)

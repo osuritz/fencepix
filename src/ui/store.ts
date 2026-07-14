@@ -149,12 +149,17 @@ export const useStore = create<AppStore>((set, get) => ({
     set(s => ({
       project: { ...next, base: requantized(next, samples) },
       selectedColorId: selectedColorId === id ? (remapTo ?? 0) : selectedColorId,
+      undoStack: [], redoStack: [],
       revision: s.revision + 1,
     }))
   },
 
   paletteLoadPreset() {
     const { project, samples } = get()
+    // Resetting nextId via createPalette(CLASSIC_12) is only safe because we
+    // also clear the undo/redo stacks below: without that, undoing past this
+    // point could restore an overlay referencing ids that collide with (or
+    // no longer exist in) the freshly reset palette.
     const palette = createPalette(CLASSIC_12)
     const valid = new Set(palette.colors.map(c => c.id))
     const overlay = project.overlay.slice()
@@ -165,7 +170,9 @@ export const useStore = create<AppStore>((set, get) => ({
     const next: Project = { ...project, palette, overlay }
     set(s => ({
       project: { ...next, base: requantized(next, samples) },
-      selectedColorId: 0, revision: s.revision + 1,
+      selectedColorId: 0,
+      undoStack: [], redoStack: [],
+      revision: s.revision + 1,
     }))
   },
 

@@ -58,6 +58,8 @@ export default function App() {
   // Cross-platform undo/redo shortcuts.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement
+      if (t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement || t.isContentEditable) return
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
         e.preventDefault()
         if (e.shiftKey) useStore.getState().redo()
@@ -91,7 +93,7 @@ export default function App() {
         </section>
       </div>
       {autosaveError && (
-        <div className="autosave-banner" role="alert">
+        <div className="autosave-banner no-print" role="alert">
           Couldn't autosave — use Export to keep your work.
         </div>
       )}
